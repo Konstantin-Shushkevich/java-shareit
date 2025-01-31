@@ -20,6 +20,7 @@ public class InMemoryUserRepository implements UserRepository {
     public UserDto save(User user) {
         user.setId(getNextId());
         users.put(user.getId(), user);
+        log.debug("User with id {} was successfully saved", user.getId());
         return UserMapper.toUserDto(user);
     }
 
