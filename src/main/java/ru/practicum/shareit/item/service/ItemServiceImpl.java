@@ -25,7 +25,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
 
     @Override
-    public ItemDto create(Long userId, ItemDto itemDto) { //TODO userId принимать как класс-обертку и не нулл
+    public ItemDto create(Long userId, ItemDto itemDto) {
         validateUser(userId);
         itemDto.setOwner(userId);
 
