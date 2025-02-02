@@ -23,7 +23,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public Optional<User> findById(long id) {
+    public Optional<User> findById(Long id) {
         return Optional.of(users.get(id));
     }
 
@@ -34,7 +34,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public User deleteById(long id) {
+    public User deleteById(Long id) {
         return users.remove(id);
     }
 

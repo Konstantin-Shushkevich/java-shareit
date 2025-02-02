@@ -13,6 +13,7 @@ import static ru.practicum.shareit.item.ItemMapper.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,7 +25,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
 
     @Override
-    public ItemDto create(long userId, ItemDto itemDto) {
+    public ItemDto create(Long userId, ItemDto itemDto) { //TODO userId принимать как класс-обертку и не нулл
         validateUser(userId);
         itemDto.setOwner(userId);
 
@@ -32,13 +33,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto findById(long id) {
+    public ItemDto findById(Long id) {
         return toItemDto(itemRepository.findById(id).orElseThrow(() ->
                 new NotFoundException(String.format("Item with id = %d is not in repository", id))));
     }
 
     @Override
-    public Collection<ItemDto> findForTheUser(long userId) {
+    public Collection<ItemDto> findForTheUser(Long userId) {
         validateUser(userId);
         return itemRepository.findForTheUser(userId).stream()
                 .map(ItemMapper::toItemDto)
@@ -46,11 +47,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto update(long userId, long id, ItemDto itemDto) {
+    public ItemDto update(Long userId, Long id, ItemDto itemDto) {
         validateUser(userId);
         ItemDto oldItemForUpdate = findById(id);
 
-        if (oldItemForUpdate.getOwner() != userId) {
+        if (!Objects.equals(oldItemForUpdate.getOwner(), userId)) {
             throw new AccessDeniedException("User can't update someone else's item");
         }
 
@@ -60,7 +61,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto delete(long id) {
+    public ItemDto delete(Long id) {
         findById(id);
         return toItemDto(itemRepository.delete(id));
     }
@@ -74,12 +75,12 @@ public class ItemServiceImpl implements ItemService {
 
         return itemRepository.getAllItems().stream()
                 .filter(item -> (containsIgnoreCase(text, item.getName()) ||
-                        containsIgnoreCase(text, item.getDescription())) && item.isAvailable())
+                        containsIgnoreCase(text, item.getDescription())) && item.getAvailable())
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 
-    private void validateUser(long userId) {
+    private void validateUser(Long userId) {
         userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException(String.format("User with id = %d is not in repository", userId)));
     }

@@ -8,11 +8,11 @@ public interface UserRepository {
 
     User save(User user);
 
-    Optional<User> findById(long id);
+    Optional<User> findById(Long id);
 
     User update(User user);
 
-    User deleteById(long id);
+    User deleteById(Long id);
 
     Optional<User> findByEmail(String email);
 

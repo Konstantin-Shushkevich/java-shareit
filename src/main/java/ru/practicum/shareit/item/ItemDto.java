@@ -12,7 +12,7 @@ import ru.practicum.shareit.item.validation.PatchItemValidation;
 @Builder
 public class ItemDto {
 
-    private long id;
+    private Long id;
 
     @NotNull(groups = CreateItemValidation.class, message = "Not able to add item if name is NULL")
     @NotBlank(groups = CreateItemValidation.class, message = "Not able to add item with blank name")
@@ -27,7 +27,7 @@ public class ItemDto {
     @NotNull(groups = CreateItemValidation.class, message = "Not able to add item if available-status is NULL")
     private Boolean available;
 
-    private long owner;
+    private Long owner;
 
-    private long request;
+    private Long request;
 }

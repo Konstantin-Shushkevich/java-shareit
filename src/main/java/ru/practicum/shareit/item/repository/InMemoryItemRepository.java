@@ -21,12 +21,12 @@ public class InMemoryItemRepository implements ItemRepository {
     }
 
     @Override
-    public Optional<Item> findById(long id) {
+    public Optional<Item> findById(Long id) {
         return Optional.ofNullable(items.get(id));
     }
 
     @Override
-    public Collection<Item> findForTheUser(long userId) {
+    public Collection<Item> findForTheUser(Long userId) {
         return items.values().stream()
                 .filter(item -> item.getOwner() == userId)
                 .collect(Collectors.toList());
@@ -45,7 +45,7 @@ public class InMemoryItemRepository implements ItemRepository {
     }
 
     @Override
-    public Item delete(long id) {
+    public Item delete(Long id) {
         return items.remove(id);
     }
 

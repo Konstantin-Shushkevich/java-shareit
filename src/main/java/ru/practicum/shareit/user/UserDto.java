@@ -13,7 +13,7 @@ import ru.practicum.shareit.user.validation.PatchUserValidation;
 @Builder
 public class UserDto {
 
-    private long id;
+    private Long id;
 
     @NotNull(groups = CreateUserValidation.class, message = "Not able to add user if name is NULL")
     @NotBlank(groups = CreateUserValidation.class, message = "Not able to add user with blank name")

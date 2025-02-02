@@ -24,13 +24,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto findById(long id) {
+    public UserDto findById(Long id) {
         return toUserDto(userRepository.findById(id).orElseThrow(() ->
                 new NotFoundException(String.format("User with id = %d is not in repository", id))));
     }
 
     @Override
-    public UserDto update(long id, UserDto userDto) {
+    public UserDto update(Long id, UserDto userDto) {
         UserDto oldUser = findById(id);
 
         if (userDto.getName() == null) userDto.setName(oldUser.getName());
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto delete(long id) {
+    public UserDto delete(Long id) {
         findById(id);
         return toUserDto(userRepository.deleteById(id));
     }

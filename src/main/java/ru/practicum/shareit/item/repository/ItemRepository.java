@@ -9,13 +9,13 @@ public interface ItemRepository {
 
     Item save(Item item);
 
-    Optional<Item> findById(long id);
+    Optional<Item> findById(Long id);
 
-    Collection<Item> findForTheUser(long userId);
+    Collection<Item> findForTheUser(Long userId);
 
     Collection<Item> getAllItems();
 
     Item update(Item item);
 
-    Item delete(long id);
+    Item delete(Long id);
 }

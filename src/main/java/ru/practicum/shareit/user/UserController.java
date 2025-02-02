@@ -28,12 +28,12 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserDto read(@Positive @PathVariable long id) {
+    public UserDto read(@Positive @PathVariable Long id) {
         return userService.findById(id);
     }
 
     @PatchMapping("/{id}")
-    public UserDto update(@Positive @PathVariable long id,
+    public UserDto update(@Positive @PathVariable Long id,
                           @Validated(PatchUserValidation.class) @RequestBody UserDto userDto) {
         return userService.update(id, userDto);
     }

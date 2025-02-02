@@ -24,30 +24,30 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto create(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId,
                           @Validated(CreateItemValidation.class) @RequestBody ItemDto itemDto) {
         return itemService.create(userId, itemDto);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto read(@PathVariable long id) {
+    public ItemDto read(@PathVariable Long id) {
         return itemService.findById(id);
     }
 
     @GetMapping
-    public Collection<ItemDto> readForTheUser(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public Collection<ItemDto> readForTheUser(@RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.findForTheUser(userId);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto update(@RequestHeader("X-Sharer-User-Id") long userId,
-                          @PathVariable long id,
+    public ItemDto update(@RequestHeader("X-Sharer-User-Id") Long userId,
+                          @PathVariable Long id,
                           @Validated(PatchItemValidation.class) @RequestBody ItemDto itemDto) {
         return itemService.update(userId, id, itemDto);
     }
 
     @DeleteMapping("/{id}")
-    public ItemDto delete(@PathVariable long id) {
+    public ItemDto delete(@PathVariable Long id) {
         return itemService.delete(id);
     }
 
