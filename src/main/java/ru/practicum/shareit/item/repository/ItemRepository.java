@@ -17,5 +17,5 @@ public interface ItemRepository {
 
     Item update(Item item);
 
-    Item delete(Long id);
+    Item deleteById(Long id);
 }

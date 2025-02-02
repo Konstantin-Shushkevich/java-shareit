@@ -24,22 +24,26 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto create(@Validated(CreateUserValidation.class) @RequestBody UserDto userDto) {
+        log.trace("Adding user is started");
         return userService.create(userDto);
     }
 
     @GetMapping("/{id}")
     public UserDto read(@Positive @PathVariable Long id) {
+        log.trace("Getting user by id: {} is started", id);
         return userService.findById(id);
     }
 
     @PatchMapping("/{id}")
     public UserDto update(@Positive @PathVariable Long id,
                           @Validated(PatchUserValidation.class) @RequestBody UserDto userDto) {
+        log.trace("Updating user with id: {} is started", id);
         return userService.update(id, userDto);
     }
 
     @DeleteMapping("/{id}")
-    public UserDto delete(@Positive @PathVariable long id) {
-        return userService.delete(id);
+    public UserDto deleteById(@Positive @PathVariable Long id) {
+        log.trace("Deletion of user with id: {} is started", id);
+        return userService.deleteById(id);
     }
 }

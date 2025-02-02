@@ -10,11 +10,11 @@ public interface UserRepository {
 
     Optional<User> findById(Long id);
 
-    User update(User user);
-
-    User deleteById(Long id);
-
     Optional<User> findByEmail(String email);
 
     Optional<User> findByName(String name);
+
+    User update(User user);
+
+    User deleteById(Long id);
 }
