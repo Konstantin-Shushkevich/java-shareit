@@ -1,17 +1,20 @@
 package ru.practicum.shareit.item;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.service.ItemService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.item.validation.CreateItemValidation;
+import ru.practicum.shareit.item.validation.PatchItemValidation;
 
 import java.util.Collection;
 
 @Slf4j
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/items")
@@ -21,8 +24,8 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto create(@RequestHeader("X-Sharer-User-Id") long userId, @Valid @RequestBody Item item) {
-        return itemService.create(userId, item);
+    public ItemDto create(@RequestHeader("X-Sharer-User-Id") long userId, @Validated(CreateItemValidation.class) @RequestBody ItemDto itemDto) {
+        return itemService.create(userId, itemDto);
     }
 
     @GetMapping("/{itemId}")
@@ -36,8 +39,10 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto update(@PathVariable long id, @RequestBody Item item) { // TODO валидировать только избранные поля?
-        return itemService.patch(id, item);
+    public ItemDto update(@RequestHeader("X-Sharer-User-Id") long userId,
+                          @PathVariable long id,
+                          @Validated(PatchItemValidation.class) @RequestBody ItemDto itemDto) {
+        return itemService.update(userId, id, itemDto);
     }
 
     @DeleteMapping("/{id}")

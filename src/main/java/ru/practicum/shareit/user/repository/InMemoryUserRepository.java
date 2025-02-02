@@ -3,8 +3,6 @@ package ru.practicum.shareit.user.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserDto;
-import ru.practicum.shareit.user.UserMapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,33 +15,27 @@ public class InMemoryUserRepository implements UserRepository {
     private final Map<Long, User> users = new HashMap<>();
 
     @Override
-    public UserDto save(User user) {
+    public User save(User user) {
         user.setId(getNextId());
         users.put(user.getId(), user);
         log.debug("User with id {} was successfully saved", user.getId());
-        return UserMapper.toUserDto(user);
+        return user;
     }
 
     @Override
-    public Optional<UserDto> findById(long id) {
-        User user = users.get(id);
-
-        if (user == null) {
-            return Optional.empty();
-        }
-
-        return Optional.ofNullable(UserMapper.toUserDto(user));
+    public Optional<User> findById(long id) {
+        return Optional.of(users.get(id));
     }
 
     @Override
-    public UserDto update(User user) {
+    public User update(User user) {
         users.put(user.getId(), user);
-        return UserMapper.toUserDto(user);
+        return user;
     }
 
     @Override
-    public UserDto deleteById(long id) {
-        return UserMapper.toUserDto(users.remove(id));
+    public User deleteById(long id) {
+        return users.remove(id);
     }
 
     private long getNextId() {
@@ -53,15 +45,17 @@ public class InMemoryUserRepository implements UserRepository {
                 .orElse(0L) + 1;
     }
 
-    public Optional<UserDto> findByEmail(String email) {
-        Optional<User> userByEmail = users.values().stream()
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return users.values().stream()
                 .filter(user -> user.getEmail().equals(email))
                 .findFirst();
+    }
 
-        if (userByEmail.isPresent()) {
-            return Optional.of(UserMapper.toUserDto(userByEmail.get()));
-        }
-
-        return Optional.empty();
+    @Override
+    public Optional<User> findByName(String name) {
+        return users.values().stream()
+                .filter(user -> user.getName().equals(name))
+                .findFirst();
     }
 }

@@ -12,15 +12,22 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponce handleNotFoundException(final NotFoundException e) {
+    public ErrorResponse handleNotFoundException(final NotFoundException e) {
         log.error("NotFoundException was thrown");
-        return new ErrorResponce("Search was failed", e.getMessage());
+        return new ErrorResponse("Search was failed", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponce handleAccessDeniedException(final AccessDeniedException e) {
+    public ErrorResponse handleAccessDeniedException(final AccessDeniedException e) {
         log.error("AccessDeniedException was thrown");
-        return new ErrorResponce("Access exception", e.getMessage());
+        return new ErrorResponse("Access exception", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleOtherExceptions(final Exception e) {
+        log.error("Exception was thrown");
+        return new ErrorResponse("Something went wrong", e.getMessage());
     }
 }
