@@ -16,7 +16,8 @@ public class InMemoryItemRepository implements ItemRepository {
     @Override
     public Item save(Item item) {
         item.setId(getNextId());
-        return items.put(item.getId(), item);
+        items.put(item.getId(), item);
+        return item;
     }
 
     @Override

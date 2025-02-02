@@ -18,7 +18,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto create(UserDto userDto) {
 
-        checkIfUserNameOrEmailAreInRepository(userDto);
+        checkIfUserNameOrEmailAreInRepositoryIfCreate(userDto);
 
         return toUserDto(userRepository.save(toUser(userDto)));
     }
@@ -34,8 +34,10 @@ public class UserServiceImpl implements UserService {
         UserDto oldUser = findById(id);
 
         if (userDto.getName() == null) userDto.setName(oldUser.getName());
-        if (userDto.getEmail() == null) userDto.setName(oldUser.getEmail());
+        if (userDto.getEmail() == null) userDto.setEmail(oldUser.getEmail());
         userDto.setId(id);
+
+        checkIfUserNameOrEmailAreInRepositoryIfUpdate(userDto);
 
         return toUserDto(userRepository.update(toUser(userDto)));
     }
@@ -46,10 +48,22 @@ public class UserServiceImpl implements UserService {
         return toUserDto(userRepository.deleteById(id));
     }
 
-    private void checkIfUserNameOrEmailAreInRepository(UserDto userDto) {
+    private void checkIfUserNameOrEmailAreInRepositoryIfCreate(UserDto userDto) {
         if (userRepository.findByEmail(userDto.getEmail()).isPresent() ||
                 userRepository.findByName(userDto.getName()).isPresent()) {
             throw new IllegalArgumentException("Attempt to add a user whose email or name was previously registered");
+        }
+    }
+
+    private void checkIfUserNameOrEmailAreInRepositoryIfUpdate(UserDto userDto) {
+        long id = userDto.getId();
+        UserDto userDtoByEmail = toUserDto(userRepository.findByEmail(userDto.getEmail()).get());
+        UserDto userDtoByName = toUserDto(userRepository.findByName(userDto.getName()).get());
+
+        if ((userDtoByEmail != null && userDtoByEmail.getId() != id) ||
+                (userDtoByName != null && userDtoByName.getId() != id)) {
+            throw new IllegalArgumentException("Unable to update user unique fields: " +
+                    "The values are already taken by another user");
         }
     }
 }
