@@ -1,10 +1,12 @@
 package ru.practicum.shareit.item;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
-@Data
 @Builder
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 public class Item {
 
     private Long id;

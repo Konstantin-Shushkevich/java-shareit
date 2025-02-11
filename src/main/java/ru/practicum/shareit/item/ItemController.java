@@ -21,10 +21,11 @@ import java.util.Collection;
 public class ItemController {
 
     private final ItemService itemService;
+    private static final String USER_HEADER = "X-Sharer-User-Id";
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ItemDto create(@RequestHeader(USER_HEADER) Long userId,
                           @Validated(CreateItemValidation.class) @RequestBody ItemDto itemDto) {
         log.trace("Adding item is started");
         return itemService.create(userId, itemDto);
@@ -37,13 +38,13 @@ public class ItemController {
     }
 
     @GetMapping
-    public Collection<ItemDto> readForTheUser(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public Collection<ItemDto> readForTheUser(@RequestHeader(USER_HEADER) Long userId) {
         log.trace("Getting items for user with id: {} is started", userId);
         return itemService.findForTheUser(userId);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto update(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ItemDto update(@RequestHeader(USER_HEADER) Long userId,
                           @PathVariable Long itemId,
                           @Validated(PatchItemValidation.class) @RequestBody ItemDto itemDto) {
         log.trace("Updating item with id: {} is started", itemId);

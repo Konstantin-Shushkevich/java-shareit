@@ -40,10 +40,19 @@ public class UserServiceImpl implements UserService {
         UserDto oldUser = findById(id);
         log.debug("User with id {} is in the database and can be updated", id);
 
-        if (userDto.getName() == null) userDto.setName(oldUser.getName());
-        if (userDto.getEmail() == null) userDto.setEmail(oldUser.getEmail());
+        if (userDto.getName() == null) {
+            userDto.setName(oldUser.getName());
+            log.debug("User name was updated");
+        }
+
+        if (userDto.getEmail() == null) {
+            userDto.setEmail(oldUser.getEmail());
+            log.debug("User email was updated");
+        }
+
         userDto.setId(id);
-        log.debug("Some fields have been updated");
+
+        log.debug("User fields update is finished");
 
         checkIfUserNameOrEmailAreInRepositoryIfUpdate(userDto);
 

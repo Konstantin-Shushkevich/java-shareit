@@ -102,10 +102,23 @@ public class ItemServiceImpl implements ItemService {
 
     private void updateItemFields(ItemDto target, ItemDto source) {
         log.debug("Start of fields update");
-        if (source.getName() != null) target.setName(source.getName());
-        if (source.getDescription() != null) target.setDescription(source.getDescription());
-        if (source.getAvailable() != null) target.setAvailable(source.getAvailable());
-        log.debug("Fields update is finished");
+
+        if (source.getName() != null) {
+            target.setName(source.getName());
+            log.debug("Item name was updated");
+        }
+
+        if (source.getDescription() != null) {
+            target.setDescription(source.getDescription());
+            log.debug("Item description was updated");
+        }
+
+        if (source.getAvailable() != null) {
+            target.setAvailable(source.getAvailable());
+            log.debug("Item available status was updated");
+        }
+
+        log.debug("Item fields update is finished");
     }
 
     private boolean containsIgnoreCase(String text, String field) {
