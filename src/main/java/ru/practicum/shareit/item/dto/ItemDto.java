@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -7,10 +7,10 @@ import lombok.*;
 import ru.practicum.shareit.item.validation.CreateItemValidation;
 import ru.practicum.shareit.item.validation.PatchItemValidation;
 
+import java.time.LocalDateTime;
+
 @Builder
-@Getter
-@Setter
-@ToString
+@Getter @Setter @ToString
 @EqualsAndHashCode
 public class ItemDto {
 
@@ -29,5 +29,6 @@ public class ItemDto {
 
     private Long owner;
 
-    private Long request;
+    private LocalDateTime start;
+    private LocalDateTime end;
 }

@@ -1,34 +1,37 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.*;
+import ru.practicum.shareit.booking.model.Status;
 
 import java.time.LocalDateTime;
 
-@Data
-public class Booking {
+@Builder
+@Getter @Setter @ToString
+@EqualsAndHashCode
+public class BookingDto {
 
-    long id;
+    private Long id;
 
     @NotNull
     @JsonFormat
     @FutureOrPresent
-    LocalDateTime start;
+    private LocalDateTime start;
 
     @NotNull
     @JsonFormat
     @Future
-    LocalDateTime end;
+    private LocalDateTime end;
 
     @NotNull
-    Long item;
+    private Long itemId;
 
     @NotNull
-    Long booker;
+    private Long bookerId;
 
     @NotNull
-    String status; //TODO сделать как enum
+    private Status status;
 }

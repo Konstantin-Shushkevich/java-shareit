@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -8,14 +8,13 @@ import ru.practicum.shareit.user.validation.CreateUserValidation;
 import ru.practicum.shareit.user.validation.PatchUserValidation;
 
 @Builder
-@Getter
-@Setter
-@ToString
+@Getter @Setter @ToString
 @EqualsAndHashCode
 public class UserDto {
 
     private Long id;
 
+    //TODO привести валидацию к подобию с таблицами в БД
     @NotBlank(groups = CreateUserValidation.class, message = "Not able to add user with blank name")
     private String name;
 
