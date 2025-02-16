@@ -5,7 +5,9 @@ import lombok.*;
 import ru.practicum.shareit.user.model.User;
 
 @Builder
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode

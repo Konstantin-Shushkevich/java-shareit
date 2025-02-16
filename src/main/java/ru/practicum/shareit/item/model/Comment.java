@@ -7,7 +7,9 @@ import ru.practicum.shareit.user.model.User;
 import java.time.LocalDateTime;
 
 @Builder
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode

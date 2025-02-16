@@ -10,7 +10,9 @@ import ru.practicum.shareit.booking.model.Status;
 import java.time.LocalDateTime;
 
 @Builder
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 @EqualsAndHashCode
 public class BookingDto {
 

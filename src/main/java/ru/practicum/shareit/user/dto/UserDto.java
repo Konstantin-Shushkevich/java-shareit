@@ -8,7 +8,9 @@ import ru.practicum.shareit.user.validation.CreateUserValidation;
 import ru.practicum.shareit.user.validation.PatchUserValidation;
 
 @Builder
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 @EqualsAndHashCode
 public class UserDto {
 
