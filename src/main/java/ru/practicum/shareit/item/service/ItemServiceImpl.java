@@ -7,6 +7,7 @@ import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.AccessDeniedException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.UserNotValidToCommentException;
 import ru.practicum.shareit.item.CommentMapper;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemRequest;
@@ -63,16 +64,16 @@ public class ItemServiceImpl implements ItemService {
         User author = validateUserIsInRepository(userId);
         log.debug("User-commentator exists");
 
+        Item item = toItemFromItemRequest(findById(userId, itemId));
+
         validateTheAbilityToComment(userId);
         log.debug("User has rights to comment this item");
-
-        Item item = toItemFromItemRequest(findById(itemId));
 
         return toCommentDto(commentRepository.save(toComment(commentDto, item, author)));
     }
 
     @Override
-    public ItemRequest findById(Long id) {
+    public ItemRequest findById(Long userId, Long id) {
 
         log.trace("Searching for item with id: {} has started (at service layer)", id);
 
@@ -80,8 +81,14 @@ public class ItemServiceImpl implements ItemService {
                 new NotFoundException(String.format("Item with id = %d is not in repository", id)))));
         log.debug("Item with id: {} is in repository. Start of adding bookings and comments...", id);
 
+        setComments(itemRequest);
+
         // TODO сделать выгрузку всего, чтобы 1 запросом?
-        return addBookingsAndComments(itemRequest, LocalDateTime.now());
+        if (Objects.equals(itemRequest.getOwner(), userId)) {
+            setBookings(itemRequest, LocalDateTime.now());
+        }
+
+        return itemRequest;
     }
 
     @Override
@@ -96,7 +103,8 @@ public class ItemServiceImpl implements ItemService {
 
         return itemRepository.findByOwnerId(userId).stream()
                 .map(ItemMapper::toItemRequestFromItem)
-                .peek(itemRequest -> addBookingsAndComments(itemRequest, now))
+                .peek(itemRequest -> setBookings(itemRequest, now))
+                .peek(this::setComments)
                 .toList();
     }
 
@@ -128,7 +136,8 @@ public class ItemServiceImpl implements ItemService {
     public void deleteById(Long id) {
 
         log.trace("Item, with id: {} deletion started (at service layer)", id);
-        findById(id);
+        itemRepository.findById(id).orElseThrow(() ->
+                new NotFoundException(String.format("Item with id = %d is not in repository", id)));
         log.debug("Item with id: {} is in repository and can be deleted", id);
         itemRepository.deleteById(id);
     }
@@ -154,10 +163,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void validateTheAbilityToComment(Long userId) {
-        bookingService.readBookingsForUser(userId, "PAST").stream()
+        bookingService.readBookingsForUser(userId, "ALL").stream()
                 .filter(bookingResponse -> Objects.equals(bookingResponse.getBooker().getId(), userId) &&
                         bookingResponse.getEnd().isBefore(LocalDateTime.now()))
-                .findFirst().orElseThrow(() -> new AccessDeniedException("User hasn't got rights to comment this item"));
+                .findFirst().orElseThrow(() -> new UserNotValidToCommentException(
+                        "The user can comment only if he/she has rented the item and the rental period has ended"));
     }
 
     private void updateItemFields(Item target, ItemDto source) {
@@ -181,7 +191,7 @@ public class ItemServiceImpl implements ItemService {
         log.debug("Item fields update is finished");
     }
 
-    private ItemRequest addBookingsAndComments(ItemRequest itemRequest, LocalDateTime now) {
+    private void setBookings(ItemRequest itemRequest, LocalDateTime now) {
 
         itemRequest.setNextBooking(toBookingDto(bookingRepository
                 .findTopBookingByItemIdAndStatusNotAndStartAfterOrderByStartAsc(itemRequest.getId(), REJECTED, now)));
@@ -189,11 +199,11 @@ public class ItemServiceImpl implements ItemService {
         itemRequest.setLastBooking(toBookingDto(bookingRepository
                 .findTopBookingByItemIdAndStatusNotAndStartBeforeOrderByEndDesc(itemRequest.getId(),
                         REJECTED, now)));
+    }
 
+    private void setComments(ItemRequest itemRequest) {
         itemRequest.setComments(commentRepository.findByItemId(itemRequest.getId()).stream()
                 .map(CommentMapper::toCommentDto)
                 .toList());
-
-        return itemRequest;
     }
 }

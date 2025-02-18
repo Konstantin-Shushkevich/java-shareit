@@ -12,7 +12,7 @@ public interface ItemService {
 
     CommentDto createComment(Long userId, Long itemId, CommentDto commentDto);
 
-    ItemRequest findById(Long id);
+    ItemRequest findById(Long userId, Long id);
 
     Collection<ItemRequest> findForTheUser(Long userId);
 

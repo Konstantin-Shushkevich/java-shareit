@@ -7,10 +7,14 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Component
 public class CommentMapper {
     public static CommentDto toCommentDto(Comment comment) {
+        if (Objects.isNull(comment)) {
+            return null;
+        }
         return CommentDto.builder()
                 .id(comment.getId())
                 .text(comment.getText())

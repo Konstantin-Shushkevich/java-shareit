@@ -14,7 +14,6 @@ import ru.practicum.shareit.exception.BookingUpdateStatusException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -142,18 +141,10 @@ public class BookingServiceImpl implements BookingService {
     public BookingResponse updateStatus(Long userId, Long bookingId, Boolean approved) {
 
         log.trace("Status update of booking with id: {} has started (at service layer)", bookingId);
-        UserDto userDto = userService.findById(userId);
-        log.debug("User with id: {} is in repository", userId);
 
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
                 new NotFoundException(String.format("There's no booking with id: %d in repository", bookingId)));
         log.debug("Booking with id: {} is in repository", bookingId);
-
-        if (!Objects.equals(userDto.getId(), booking.getItem().getOwner().getId())) {
-            throw new AccessDeniedException(String.format("Status update denied. " +
-                    "User with id: %d isn't an owner of item with id: %d", userId, booking.getItem().getId()));
-        }
-        log.debug("User has rights to update status of booking");
 
         if (booking.getStatus().equals(APPROVED) && approved) {
             throw new BookingUpdateStatusException(String.format("Unable to approve the booking. " +
@@ -161,11 +152,19 @@ public class BookingServiceImpl implements BookingService {
         }
         log.debug("Booking is able to be approved as it hadn't been approved before");
 
-        if (approved) { //TODO нужно ли менять поле available в таблице items
+        if (!Objects.equals(userId, booking.getItem().getOwner().getId())) {
+            throw new AccessDeniedException(String.format("Status update denied. " +
+                    "User with id: %d isn't an owner of item with id: %d", userId, booking.getItem().getId()));
+        }
+        log.debug("User has rights to update status of booking");
+
+        if (approved) {
             booking.setStatus(APPROVED);
         } else {
             booking.setStatus(REJECTED);
         }
+
+        log.debug("Status set");
 
         return toBookingResponse(bookingRepository.save(booking));
     }

@@ -16,7 +16,6 @@ public class UserDto {
 
     private Long id;
 
-    //TODO привести валидацию к подобию с таблицами в БД
     @NotBlank(groups = CreateUserValidation.class, message = "Not able to add user with blank name")
     private String name;
 

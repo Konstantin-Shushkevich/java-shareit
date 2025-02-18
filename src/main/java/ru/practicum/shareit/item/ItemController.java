@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,42 +31,43 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto create(@RequestHeader(USER_HEADER) Long userId,
+    public ItemDto create(@Positive @RequestHeader(USER_HEADER) Long userId,
                           @Validated(CreateItemValidation.class) @RequestBody ItemDto itemDto) {
         log.trace("Adding item is started");
         return itemService.create(userId, itemDto);
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto createComment(@RequestHeader(USER_HEADER) Long userId,
-                                    @PathVariable Long itemId,
+    public CommentDto createComment(@Positive @RequestHeader(USER_HEADER) Long userId,
+                                    @Positive @PathVariable Long itemId,
                                     @Valid @RequestBody CommentDto commentDto) {
         log.trace("Adding comment by user with id: {} for item with id: {} is started", userId, itemId);
         return itemService.createComment(userId, itemId, commentDto);
     }
 
     @GetMapping("/{itemId}")
-    public ItemRequest read(@PathVariable Long itemId) { //todo с отзывами
+    public ItemRequest read(@Positive @RequestHeader(USER_HEADER) Long userId,
+                            @Positive @PathVariable Long itemId) {
         log.trace("Getting item by id: {} is started", itemId);
-        return itemService.findById(itemId);
+        return itemService.findById(userId, itemId);
     }
 
     @GetMapping
-    public Collection<ItemRequest> readForTheUser(@RequestHeader(USER_HEADER) Long userId) {
+    public Collection<ItemRequest> readForTheUser(@Positive @RequestHeader(USER_HEADER) Long userId) {
         log.trace("Getting items for user with id: {} is started", userId);
         return itemService.findForTheUser(userId);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto update(@RequestHeader(USER_HEADER) Long userId,
-                          @PathVariable Long itemId,
+    public ItemDto update(@Positive @RequestHeader(USER_HEADER) Long userId,
+                          @Positive @PathVariable Long itemId,
                           @Validated(PatchItemValidation.class) @RequestBody ItemDto itemDto) {
         log.trace("Updating item with id: {} is started", itemId);
         return itemService.update(userId, itemId, itemDto);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@Positive @PathVariable Long id) {
         log.trace("Deletion of item with id: {} is started", id);
         itemService.deleteById(id);
     }
