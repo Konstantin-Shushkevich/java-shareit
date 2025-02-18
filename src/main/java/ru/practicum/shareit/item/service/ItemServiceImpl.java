@@ -83,7 +83,6 @@ public class ItemServiceImpl implements ItemService {
 
         setComments(itemRequest);
 
-        // TODO сделать выгрузку всего, чтобы 1 запросом?
         if (Objects.equals(itemRequest.getOwner(), userId)) {
             setBookings(itemRequest, LocalDateTime.now());
         }
