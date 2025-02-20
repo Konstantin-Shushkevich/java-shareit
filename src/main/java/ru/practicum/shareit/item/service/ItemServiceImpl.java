@@ -3,7 +3,8 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.booking.BookingMapper;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.AccessDeniedException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -11,6 +12,7 @@ import ru.practicum.shareit.exception.UserNotValidToCommentException;
 import ru.practicum.shareit.item.CommentMapper;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemRequest;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.ItemMapper;
@@ -19,16 +21,13 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import static ru.practicum.shareit.booking.BookingMapper.toBookingDto;
 import static ru.practicum.shareit.booking.model.Status.REJECTED;
 import static ru.practicum.shareit.item.CommentMapper.toComment;
 import static ru.practicum.shareit.item.CommentMapper.toCommentDto;
 import static ru.practicum.shareit.item.ItemMapper.*;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,7 +35,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
-    private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
@@ -77,14 +75,19 @@ public class ItemServiceImpl implements ItemService {
 
         log.trace("Searching for item with id: {} has started (at service layer)", id);
 
-        ItemRequest itemRequest = toItemRequestFromItem((itemRepository.findById(id).orElseThrow(() ->
-                new NotFoundException(String.format("Item with id = %d is not in repository", id)))));
+        Item item = itemRepository.findByIdInFull(id).orElseThrow(() ->
+                new NotFoundException(String.format("Item with id: %d is not in repository", id)));
         log.debug("Item with id: {} is in repository. Start of adding bookings and comments...", id);
 
-        setComments(itemRequest);
+        ItemRequest itemRequest = toItemRequestFromItem(item);
+
+        setComments(itemRequest, item.getComments());
+        log.debug("Comments wer set for item with id: {}", id);
 
         if (Objects.equals(itemRequest.getOwner(), userId)) {
-            setBookings(itemRequest, LocalDateTime.now());
+            setBookings(itemRequest, item.getBookings());
+            log.debug("Bookings were set for item with id: {} (request from the owner of the thing with id: {})",
+                    id, userId);
         }
 
         return itemRequest;
@@ -93,17 +96,14 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Collection<ItemRequest> findForTheUser(Long userId) {
 
-        log.trace("Searching for items of user with id: {} has started (at service layer)", userId);
-        validateUserIsInRepository(userId);
-        log.debug("Item(s) owner with id: {} exists. Start of getting user's item(s)...", userId);
-
-        LocalDateTime now = LocalDateTime.now();
-        log.trace("Current Date-Time set: {}", now);
-
-        return itemRepository.findByOwnerId(userId).stream()
-                .map(ItemMapper::toItemRequestFromItem)
-                .peek(itemRequest -> setBookings(itemRequest, now))
-                .peek(this::setComments)
+        return itemRepository.findAllByOwnerIdInFull(userId).stream()
+                .map(item -> {
+                    ItemRequest itemRequest = toItemRequestFromItem(item);
+                    if (item.getOwner().getId().equals(userId)) {
+                        setBookings(itemRequest, item.getBookings());
+                    }
+                    return itemRequest;
+                })
                 .toList();
     }
 
@@ -190,19 +190,31 @@ public class ItemServiceImpl implements ItemService {
         log.debug("Item fields update is finished");
     }
 
-    private void setBookings(ItemRequest itemRequest, LocalDateTime now) {
-
-        itemRequest.setNextBooking(toBookingDto(bookingRepository
-                .findTopBookingByItemIdAndStatusNotAndStartAfterOrderByStartAsc(itemRequest.getId(), REJECTED, now)));
-
-        itemRequest.setLastBooking(toBookingDto(bookingRepository
-                .findTopBookingByItemIdAndStatusNotAndStartBeforeOrderByEndDesc(itemRequest.getId(),
-                        REJECTED, now)));
-    }
-
-    private void setComments(ItemRequest itemRequest) {
-        itemRequest.setComments(commentRepository.findByItemId(itemRequest.getId()).stream()
+    private void setComments(ItemRequest itemRequest, Set<Comment> comments) {
+        itemRequest.setComments(comments.stream()
                 .map(CommentMapper::toCommentDto)
                 .toList());
+    }
+
+    private void setBookings(ItemRequest itemRequest, Set<Booking> bookings) {
+        LocalDateTime now = LocalDateTime.now();
+
+        itemRequest.setLastBooking(
+                bookings.stream()
+                        .filter(booking -> booking.getStatus() != REJECTED)
+                        .filter(booking -> booking.getEnd().isBefore(now))
+                        .max(Comparator.comparing(Booking::getEnd))
+                        .map(BookingMapper::toBookingDto)
+                        .orElse(null)
+        );
+
+        itemRequest.setNextBooking(
+                bookings.stream()
+                        .filter(booking -> booking.getStatus() != REJECTED)
+                        .filter(booking -> booking.getStart().isAfter(now))
+                        .min(Comparator.comparing(Booking::getStart))
+                        .map(BookingMapper::toBookingDto)
+                        .orElse(null)
+        );
     }
 }
