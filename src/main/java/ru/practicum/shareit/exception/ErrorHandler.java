@@ -24,6 +24,15 @@ public class ErrorHandler {
         return new ErrorResponse("Access exception", e.getMessage());
     }
 
+    @ExceptionHandler({BookingUpdateStatusException.class,
+            BookingDeniedException.class,
+            UserNotValidToCommentException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBadRequestException(final RuntimeException e) {
+        log.error("BookingDeniedException was thrown");
+        return new ErrorResponse("Something went wrong with booking", e.getMessage());
+    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleOtherExceptions(final Exception e) {
