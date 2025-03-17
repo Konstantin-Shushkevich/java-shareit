@@ -18,20 +18,20 @@ import java.util.Collection;
 @RequiredArgsConstructor
 @RequestMapping("/items")
 public class ItemController {
-    private final String USER_HEADER = "X-Sharer-User-Id";
+    private final String userHeader = "X-Sharer-User-Id";
 
     private final ItemService itemService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto create(@RequestHeader(USER_HEADER) Long userId,
+    public ItemDto create(@RequestHeader(userHeader) Long userId,
                           @RequestBody ItemDto itemDto) {
         log.trace("Adding item is started");
         return itemService.create(userId, itemDto);
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto createComment(@RequestHeader(USER_HEADER) Long userId,
+    public CommentDto createComment(@RequestHeader(userHeader) Long userId,
                                     @PathVariable Long itemId,
                                     @RequestBody CommentDto commentDto) {
         log.trace("Adding comment by user with id: {} for item with id: {} is started", userId, itemId);
@@ -39,20 +39,20 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDtoSpecified read(@RequestHeader(USER_HEADER) Long userId,
+    public ItemDtoSpecified read(@RequestHeader(userHeader) Long userId,
                                  @PathVariable Long itemId) {
         log.trace("Getting item by id: {} is started", itemId);
         return itemService.findById(userId, itemId);
     }
 
     @GetMapping
-    public Collection<ItemDtoSpecified> readForTheUser(@RequestHeader(USER_HEADER) Long userId) {
+    public Collection<ItemDtoSpecified> readForTheUser(@RequestHeader(userHeader) Long userId) {
         log.trace("Getting items for user with id: {} is started", userId);
         return itemService.findForTheUser(userId);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto update(@RequestHeader(USER_HEADER) Long userId,
+    public ItemDto update(@RequestHeader(userHeader) Long userId,
                           @PathVariable Long itemId,
                           @RequestBody ItemDto itemDto) {
         log.trace("Updating item with id: {} is started", itemId);

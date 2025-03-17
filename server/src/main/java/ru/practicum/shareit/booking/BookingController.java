@@ -15,27 +15,27 @@ import java.util.Collection;
 @RequiredArgsConstructor
 @RequestMapping("/bookings")
 public class BookingController {
-    private final String USER_HEADER = "X-Sharer-User-Id";
+    private final String userHeader = "X-Sharer-User-Id";
 
     private final BookingService bookingService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BookingResponse create(@RequestHeader(USER_HEADER) Long userId,
+    public BookingResponse create(@RequestHeader(userHeader) Long userId,
                                   @RequestBody BookingDto bookingDto) {
         log.trace("Booking is started");
         return bookingService.create(userId, bookingDto);
     }
 
     @GetMapping("/{bookingId}")
-    public BookingResponse read(@RequestHeader(USER_HEADER) Long userId,
+    public BookingResponse read(@RequestHeader(userHeader) Long userId,
                                 @PathVariable Long bookingId) {
         log.trace("Getting booking with id: {} by user with id: {} is started", bookingId, userId);
         return bookingService.findById(userId, bookingId);
     }
 
     @GetMapping
-    public Collection<BookingResponse> readUserBookings(@RequestHeader(USER_HEADER) Long userId,
+    public Collection<BookingResponse> readUserBookings(@RequestHeader(userHeader) Long userId,
                                                         @RequestParam(required = false,
                                                                 defaultValue = "ALL") String state) {
         log.trace("Getting collection of bookings for user-owner with id: {} is started. State is: {}", userId, state);
@@ -43,7 +43,7 @@ public class BookingController {
     }
 
     @GetMapping("/owner")
-    public Collection<BookingResponse> readUserAsOwnerBookings(@RequestHeader(USER_HEADER) Long userId,
+    public Collection<BookingResponse> readUserAsOwnerBookings(@RequestHeader(userHeader) Long userId,
                                                                @RequestParam(required = false,
                                                                        defaultValue = "ALL") String state) {
         log.trace("Getting collection of bookings for user-booker with id: {} is started. State is: {}",
@@ -52,7 +52,7 @@ public class BookingController {
     }
 
     @PatchMapping("/{bookingId}")
-    public BookingResponse updateStatus(@RequestHeader(USER_HEADER) Long userId,
+    public BookingResponse updateStatus(@RequestHeader(userHeader) Long userId,
                                         @PathVariable Long bookingId,
                                         @RequestParam Boolean approved) {
         log.trace("Start of updating booking status (id: {}, userId: {})", bookingId, userId);

@@ -15,27 +15,27 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping(path = "/requests")
 public class ItemRequestController {
-    private final String USER_HEADER = "X-Sharer-User-Id";
+    private final String userHeader = "X-Sharer-User-Id";
 
     private final ItemRequestService itemRequestService;
 
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemRequestDto create(@RequestHeader(USER_HEADER) Long userId,
+    public ItemRequestDto create(@RequestHeader(userHeader) Long userId,
                                  @RequestBody ItemRequestDto itemRequestDto) {
         log.trace("Adding item-request is started");
         return itemRequestService.create(userId, itemRequestDto);
     }
 
     @GetMapping
-    public List<ItemRequestDto> readAllByUser(@RequestHeader(USER_HEADER) Long userId) {
+    public List<ItemRequestDto> readAllByUser(@RequestHeader(userHeader) Long userId) {
         log.trace("Getting item-requests of user with id: {} is started", userId);
         return itemRequestService.readAllByUser(userId);
     }
 
     @GetMapping("/all")
-    public List<ItemRequestDto> readAllByOtherUsers(@RequestHeader(USER_HEADER) Long userId) {
+    public List<ItemRequestDto> readAllByOtherUsers(@RequestHeader(userHeader) Long userId) {
         log.trace("Getting item-requests for all users except user with id: {} is started", userId);
         return itemRequestService.readAllByOtherUsers(userId);
     }
