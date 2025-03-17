@@ -13,7 +13,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.validation.CreateItemValidation;
 import ru.practicum.shareit.item.validation.PatchItemValidation;
 
-import static ru.practicum.shareit.util.Constants.USER_HEADER;
+import static ru.practicum.shareit.util.Constants.user_header;
 
 @Slf4j
 @Validated
@@ -26,14 +26,14 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> create(@Positive @RequestHeader(USER_HEADER) Long userId,
+    public ResponseEntity<Object> create(@Positive @RequestHeader(user_header) Long userId,
                                          @Validated(CreateItemValidation.class) @RequestBody ItemDto itemDto) {
         log.trace("Adding item is started");
         return itemClient.create(userId, itemDto);
     }
 
     @PostMapping("/{itemId}/comment")
-    public ResponseEntity<Object> createComment(@Positive @RequestHeader(USER_HEADER) Long userId,
+    public ResponseEntity<Object> createComment(@Positive @RequestHeader(user_header) Long userId,
                                                 @Positive @PathVariable Long itemId,
                                                 @Valid @RequestBody CommentDto commentDto) {
         log.trace("Adding comment by user with id: {} for item with id: {} is started", userId, itemId);
@@ -41,20 +41,20 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<Object> read(@Positive @RequestHeader(USER_HEADER) Long userId,
+    public ResponseEntity<Object> read(@Positive @RequestHeader(user_header) Long userId,
                                        @Positive @PathVariable Long itemId) {
         log.trace("Getting item by id: {} is started", itemId);
         return itemClient.findById(userId, itemId);
     }
 
     @GetMapping
-    public ResponseEntity<Object> readForTheUser(@Positive @RequestHeader(USER_HEADER) Long userId) {
+    public ResponseEntity<Object> readForTheUser(@Positive @RequestHeader(user_header) Long userId) {
         log.trace("Getting items for user with id: {} is started", userId);
         return itemClient.findForTheUser(userId);
     }
 
     @PatchMapping("/{itemId}")
-    public ResponseEntity<Object> update(@Positive @RequestHeader(USER_HEADER) Long userId,
+    public ResponseEntity<Object> update(@Positive @RequestHeader(user_header) Long userId,
                                          @Positive @PathVariable Long itemId,
                                          @Validated(PatchItemValidation.class) @RequestBody ItemDto itemDto) {
         log.trace("Updating item with id: {} is started", itemId);

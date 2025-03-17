@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 
 import static ru.practicum.shareit.util.Constants.STATE_REGEX;
-import static ru.practicum.shareit.util.Constants.USER_HEADER;
+import static ru.practicum.shareit.util.Constants.user_header;
 
 @Slf4j
 @Validated
@@ -26,21 +26,21 @@ public class BookingController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Object> create(@Positive @RequestHeader(USER_HEADER) Long userId,
+	public ResponseEntity<Object> create(@Positive @RequestHeader(user_header) Long userId,
 										 @Valid @RequestBody BookingDto bookingDto) {
 		log.trace("Booking is started");
 		return bookingClient.create(userId, bookingDto);
 	}
 
 	@GetMapping("/{bookingId}")
-	public ResponseEntity<Object> read(@Positive @RequestHeader(USER_HEADER) Long userId,
+	public ResponseEntity<Object> read(@Positive @RequestHeader(user_header) Long userId,
 									   @Positive @PathVariable Long bookingId) {
 		log.trace("Getting booking with id: {} by user with id: {} is started", bookingId, userId);
 		return bookingClient.findById(userId, bookingId);
 	}
 
 	@GetMapping
-	public ResponseEntity<Object> readUserBookings(@Positive @RequestHeader(USER_HEADER) Long userId,
+	public ResponseEntity<Object> readUserBookings(@Positive @RequestHeader(user_header) Long userId,
 												   @Valid @Pattern(regexp = STATE_REGEX)
 												   @RequestParam(required = false,
 														   defaultValue = "ALL") String state) {
@@ -49,7 +49,7 @@ public class BookingController {
 	}
 
 	@GetMapping("/owner")
-	public ResponseEntity<Object> readUserAsOwnerBookings(@Positive @RequestHeader(USER_HEADER) Long userId,
+	public ResponseEntity<Object> readUserAsOwnerBookings(@Positive @RequestHeader(user_header) Long userId,
 														  @Valid @Pattern(regexp = STATE_REGEX)
 														  @RequestParam(required = false,
 																  defaultValue = "ALL") String state) {
@@ -59,7 +59,7 @@ public class BookingController {
 	}
 
 	@PatchMapping("/{bookingId}")
-	public ResponseEntity<Object> updateStatus(@Positive @RequestHeader(USER_HEADER) Long userId,
+	public ResponseEntity<Object> updateStatus(@Positive @RequestHeader(user_header) Long userId,
 											   @Positive @PathVariable Long bookingId,
 											   @NotNull @RequestParam Boolean approved) {
 		log.trace("Start of updating booking status (id: {}, userId: {})", bookingId, userId);

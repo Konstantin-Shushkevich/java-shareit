@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
-import static ru.practicum.shareit.util.Constants.USER_HEADER;
+import static ru.practicum.shareit.util.Constants.user_header;
 
 
 @Slf4j
@@ -20,20 +20,20 @@ public class ItemRequestController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> create(@RequestHeader(USER_HEADER) Long userId,
+    public ResponseEntity<Object> create(@RequestHeader(user_header) Long userId,
                                          @RequestBody ItemRequestDto itemRequestDto) {
         log.trace("Adding item-request is started");
         return itemRequestClient.create(userId, itemRequestDto);
     }
 
     @GetMapping
-    public ResponseEntity<Object> readAllByUser(@RequestHeader(USER_HEADER) Long userId) {
+    public ResponseEntity<Object> readAllByUser(@RequestHeader(user_header) Long userId) {
         log.trace("Getting item-requests of user with id: {} is started", userId);
         return itemRequestClient.readAllByUser(userId);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Object> readAllByOtherUsers(@RequestHeader(USER_HEADER) Long userId) {
+    public ResponseEntity<Object> readAllByOtherUsers(@RequestHeader(user_header) Long userId) {
         log.trace("Getting item-requests for all users except user with id: {} is started", userId);
         return itemRequestClient.readAllByOtherUsers(userId);
     }
