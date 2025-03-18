@@ -18,11 +18,7 @@ public class ItemRequestDto {
     @Size(max = 255)
     String description;
 
-    @NotNull
     Long requester;
 
-    @NotNull
-    @JsonFormat
-    @FutureOrPresent
     LocalDateTime created;
 }
