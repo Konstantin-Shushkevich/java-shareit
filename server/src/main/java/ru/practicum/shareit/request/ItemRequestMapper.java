@@ -23,7 +23,6 @@ public class ItemRequestMapper {
     }
 
     public static ItemRequest toItemRequestIfCreate(ItemRequestDto itemRequestDto) {
-
         return ItemRequest.builder()
                 .description(itemRequestDto.getDescription())
                 .created(itemRequestDto.getCreated())

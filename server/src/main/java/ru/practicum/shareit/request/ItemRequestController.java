@@ -25,6 +25,7 @@ public class ItemRequestController {
     public ItemRequestDto create(@RequestHeader(userHeader) Long userId,
                                  @RequestBody ItemRequestDto itemRequestDto) {
         log.trace("Adding item-request is started");
+
         return itemRequestService.create(userId, itemRequestDto);
     }
 

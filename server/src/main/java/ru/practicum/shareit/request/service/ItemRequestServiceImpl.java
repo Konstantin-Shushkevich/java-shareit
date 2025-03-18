@@ -35,7 +35,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public ItemRequestDto create(Long userId, ItemRequestDto itemRequestDto) {
         User requester = toUser(userService.findById(userId));
-
         ItemRequest itemRequest = toItemRequestIfCreate(itemRequestDto);
         itemRequest.setRequester(requester);
         itemRequest.setCreated(LocalDateTime.now());

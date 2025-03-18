@@ -26,12 +26,18 @@ public class ErrorHandler {
 
     @ExceptionHandler({BookingUpdateStatusException.class,
             BookingDeniedException.class,
-            UserNotValidToCommentException.class,
-            UserEmailNotUniqueException.class})
+            UserNotValidToCommentException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequestException(final RuntimeException e) {
         log.error("BookingDeniedException was thrown");
         return new ErrorResponse("Something went wrong with booking", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleConflictException(final UserEmailNotUniqueException e) {
+        log.error("Conflict exception was thrown");
+        return new ErrorResponse("Conflict exception", e.getMessage());
     }
 
     @ExceptionHandler
