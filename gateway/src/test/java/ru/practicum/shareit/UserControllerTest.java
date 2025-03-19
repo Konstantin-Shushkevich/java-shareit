@@ -93,7 +93,7 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.description").value("Not able to add user with blank name"));
+                .andExpect(jsonPath("$.error").value("Not able to add user with blank name"));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.description").value("Not able to add user with blank email"));
+                .andExpect(jsonPath("$.error").value("Not able to add user with blank email"));
     }
 
     @Test
@@ -117,7 +117,7 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.description")
+                .andExpect(jsonPath("$.error")
                         .value("must be a well-formed email address"));
     }
 
