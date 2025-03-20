@@ -42,8 +42,7 @@ public class BookingController {
 	@GetMapping
 	public ResponseEntity<Object> readUserBookings(@Positive @RequestHeader(USER_HEADER) Long userId,
 												   @Valid @Pattern(regexp = STATE_REGEX)
-												   @RequestParam(required = false,
-														   defaultValue = "ALL") String state) {
+												   @RequestParam(defaultValue = "ALL") String state) {
 		log.trace("Getting collection of bookings for user-owner with id: {} is started. State is: {}", userId, state);
 		return bookingClient.getBookings(userId, state);
 	}
@@ -51,8 +50,7 @@ public class BookingController {
 	@GetMapping("/owner")
 	public ResponseEntity<Object> readUserAsOwnerBookings(@Positive @RequestHeader(USER_HEADER) Long userId,
 														  @Valid @Pattern(regexp = STATE_REGEX)
-														  @RequestParam(required = false,
-																  defaultValue = "ALL") String state) {
+														  @RequestParam(defaultValue = "ALL") String state) {
 		log.trace("Getting collection of bookings for user-booker with id: {} is started. State is: {}",
 				userId, state);
 		return bookingClient.getBookings(userId, state);

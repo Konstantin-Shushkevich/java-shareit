@@ -36,16 +36,14 @@ public class BookingController {
 
     @GetMapping
     public Collection<BookingResponse> readUserBookings(@RequestHeader(userHeader) Long userId,
-                                                        @RequestParam(required = false,
-                                                                defaultValue = "ALL") String state) {
+                                                        @RequestParam String state) {
         log.trace("Getting collection of bookings for user-owner with id: {} is started. State is: {}", userId, state);
         return bookingService.readBookingsForUser(userId, state);
     }
 
     @GetMapping("/owner")
     public Collection<BookingResponse> readUserAsOwnerBookings(@RequestHeader(userHeader) Long userId,
-                                                               @RequestParam(required = false,
-                                                                       defaultValue = "ALL") String state) {
+                                                               @RequestParam String state) {
         log.trace("Getting collection of bookings for user-booker with id: {} is started. State is: {}",
                 userId, state);
         return bookingService.readBookingsForOwner(userId, state);

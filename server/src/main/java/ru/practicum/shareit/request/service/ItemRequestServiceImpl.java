@@ -16,7 +16,6 @@ import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static ru.practicum.shareit.request.ItemRequestMapper.toItemRequestIfCreate;
@@ -45,16 +44,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public List<ItemRequestDto> readAllByUser(Long userId) {
         userService.findById(userId);
 
-        List<ItemRequest> itemRequests = itemRequestRepository.findByRequester_IdOrderByCreatedDesc(userId);
-        return itemRequests.stream()
-                .map(ItemRequestMapper::toItemRequestDto)
-                .filter(Objects::nonNull)
-                .peek(itemRequestDto ->
-                        itemRequestDto.setItems(
-                                itemRepository.findItemByRequestId(itemRequestDto.getId()).stream()
-                                        .map(ItemMapper::toItemDtoFromItem).toList()
-                        )
-                )
+        return itemRequestRepository.findByRequesterIdWithItems(userId)
+                .stream()
+                .map(ItemRequestMapper::toItemRequestDtoWithItems)
                 .toList();
     }
 
@@ -66,14 +58,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
         if (!itemRequests.isEmpty()) {
             return itemRequests.stream()
-                    .map(ItemRequestMapper::toItemRequestDto)
-                    .filter(Objects::nonNull)
-                    .peek(itemRequestDto ->
-                            itemRequestDto.setItems(
-                                    itemRepository.findItemByRequestId(itemRequestDto.getId()).stream()
-                                            .map(ItemMapper::toItemDtoFromItem).toList()
-                            )
-                    )
+                    .map(ItemRequestMapper::toItemRequestDtoWithItems)
                     .toList();
         }
 

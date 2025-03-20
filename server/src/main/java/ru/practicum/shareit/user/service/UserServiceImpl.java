@@ -23,10 +23,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto userDto) {
+        log.trace("Adding user at service level has started");
 
-        if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
+        userRepository.findByEmail(userDto.getEmail()).ifPresent(user -> {
             throw new UserEmailNotUniqueException("User with email: " + userDto.getEmail() + " is already exists");
-        }
+        });
+
+        log.debug("The user’s email is valid: it is not registered in the database");
 
         return toUserDto(userRepository.save(toUser(userDto)));
     }

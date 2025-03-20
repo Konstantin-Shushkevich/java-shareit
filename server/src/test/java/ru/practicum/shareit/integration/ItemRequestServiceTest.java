@@ -84,6 +84,9 @@ public class ItemRequestServiceTest {
 
         ItemRequestDto createdRequest1 = itemRequestService.create(user.getId(), requestDto1);
 
+        entityManager.flush();
+        entityManager.clear();
+
         ItemRequestDto requestDto2 = ItemRequestDto.builder()
                 .description("Request 2")
                 .build();
@@ -97,6 +100,9 @@ public class ItemRequestServiceTest {
                 .build();
 
         itemService.create(user.getId(), item1);
+
+        entityManager.flush();
+        entityManager.clear();
 
         List<ItemRequestDto> result = itemRequestService.readAllByUser(user.getId());
 
@@ -125,6 +131,9 @@ public class ItemRequestServiceTest {
                 .build();
 
         itemRequestService.create(user.getId(), userRequestDto);
+
+        entityManager.flush();
+        entityManager.clear();
 
         List<ItemRequestDto> result = itemRequestService.readAllByOtherUsers(user.getId());
 

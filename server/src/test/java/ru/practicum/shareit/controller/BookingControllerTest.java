@@ -33,6 +33,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = BookingController.class)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class BookingControllerTest {
+
+    private final String defaultState = "ALL";
+
     @MockBean
     private BookingService bookingService;
     private final ObjectMapper mapper;
@@ -144,6 +147,7 @@ public class BookingControllerTest {
 
         mvc.perform(get("/bookings")
                         .header("X-Sharer-User-Id", 1)
+                        .param("state", defaultState)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -164,6 +168,7 @@ public class BookingControllerTest {
 
         mvc.perform(get("/bookings/owner")
                         .header("X-Sharer-User-Id", 1)
+                        .param("state", defaultState)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
